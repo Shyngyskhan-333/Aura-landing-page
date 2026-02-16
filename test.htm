@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIS Hackathon-2026: Shaki: Aura</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* --- Цветовая палитра и переменные --- */
+        :root {
+            --color-yellow: #FFBF00;
+            --color-dark: hsl(0, 0%, 20%);
+            --color-light-grey: hsl(0, 0%, 80%);
+            --color-blue: #6366F1;
+            --color-blue-dark: #4F46E5;
+            --color-white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        html {
+            /* Плавная прокрутка при клике на меню */
+            scroll-behavior: smooth; 
+        }
+
+        body {
+            background: linear-gradient(90deg, var(--color-yellow), rgb(253, 213, 82), var(--color-yellow));
+            background-attachment: fixed;
+            color: var(--color-dark);
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-top:100px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px;
+            position: relative;
+        }
+
+        /* --- Анимации контента --- */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes floatAnim {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(2deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        @keyframes floatSubAnim {
+            0% { transform: translateY(0px) rotate(-3deg); }
+            50% { transform: translateY(-10px) rotate(-1deg); }
+            100% { transform: translateY(0px) rotate(-3deg); }
+        }
+
+        /* --- Фиксированная навигационная панель --- */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px; 
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000; 
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .navbar-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1120px;
+            margin: 0 auto;
+        }
+
+        .logo-wrapper {
+            display: flex;
+            align-items: center;
+            position: relative;
+            color:var(--color-dark);
+            text-decoration: none;
+        }
+
+        .loader-area {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            z-index: 1; 
+            margin-right: -20px; 
+        }
+
+        .spinner-ring {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            animation: spin 5s infinite; 
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); animation-timing-function: ease-in-out; }
+            30%, 100% { transform: rotate(360deg); }
+        }
+
+        .meteor-logo {
+            position: absolute;
+            top: calc(50% - 14px); 
+            left: -14px; 
+            width: 28px;
+            height: 28px;
+            mix-blend-mode: darken; 
+            transform: rotate(-45deg); 
+        }
+
+        .logo-text {
+            font-size: 26px; 
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            z-index: 2;  
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--color-dark);
+            font-weight: 600;
+            font-size: 15px;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-links a:hover { opacity: 0.6; }
+
+        /* --- Главный контент (Hero) --- */
+        .hero-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            padding: 140px 0 80px 0; 
+            min-height: 80vh; 
+        }
+
+        .content-left {
+            width: 50%;
+            padding-right: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            z-index: 10;
+        }
+
+        .text-content { margin-bottom: 40px; }
+
+        .slogan {
+            font-size: 48px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            letter-spacing: -1px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+            animation-delay: 0.2s;
+        }
+
+        .subslogan {
+            font-size: 19px;
+            font-weight: 500;
+            line-height: 1.5;
+            margin-bottom: 40px;
+            color: hsl(0, 0%, 30%); 
+            max-width: 95%;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+            animation-delay: 0.4s;
+        }
+
+        .btn-action {
+            display: inline-block;
+            background-color: var(--color-dark);
+            color: var(--color-white);
+            text-decoration: none;
+            padding: 18px 45px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+            animation-delay: 0.6s;
+        }
+
+        .btn-action:hover {
+            scale: 1.025;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            background-color: var(--color-blue);
+        }
+
+        .button-caption {
+            display: block;
+            margin-top: 15px;
+            font-size: 13px;
+            font-weight: 600;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+            animation-delay: 0.7s;
+        }
+
+        .testimonial-block {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-top: 40px;
+            padding: 40px 15px 40px 15px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+            animation-delay: 0.9s;
+            box-shadow: -15px 25px 50px rgba(0,0,0,0.15);
+            border-radius: 15px;
+            background: var(--color-white);
+            transition: 0.3s;
+        }
+
+        .testimonial-block:hover {
+            scale: 1.02;
+            rotate: -1deg;
+        }
+
+        .quote-icon {
+            font-size: 70px;
+            font-family: Georgia, serif;
+            color: var(--color-blue-dark);
+            line-height: 0.7;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .testimonial-text {
+            font-size: 18px;
+            font-weight: 600;
+            font-style: italic;
+            margin-bottom: 15px;
+            color: var(--color-dark);
+        }
+
+        .author-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .author-avatar {
+            width: 45px;
+            height: 45px;
+            background-image: url(https://i.ibb.co.com/TB99g4n2/pfp.png); 
+            background-color: var(--color-yellow); 
+            background-size: cover;
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.4);
+        }
+
+        .author-name {
+            font-weight: 800;
+            font-size: 14px;
+        }
+
+        .author-role {
+            font-size: 12px;
+            font-weight: 500;
+            opacity: 0.7;
+        }
+
+        .content-right {
+            width: 50%;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 20px;
+            z-index: 5;
+        }
+
+        .placeholder-main {
+            width: 320px;
+            height: 520px;
+            background: url(https://i.ibb.co.com/7dphskgs/main-Screen.png);
+            background-size: cover;
+            background-position: bottom;
+            border-radius: 24px;
+            box-shadow: -15px 25px 50px rgba(0,0,0,0.15);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--color-white);
+            font-weight: 700;
+            font-size: 18px;
+            text-align: center;
+            padding: 20px;
+            animation: floatAnim 6s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .placeholder-main::after, .feature-card-dark::after {
+            content: ''; 
+            position: absolute;
+            top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 100%);
+            transform: skewX(-25deg);
+            animation: glare 4s infinite;
+        }
+
+        @keyframes glare {
+            0% { left: -100%; }
+            20% { left: 200%; }
+            100% { left: 200%; }
+        }
+
+        .placeholder-sub {
+            position: absolute;
+            bottom: 40px; 
+            right: 20px;
+            width: 240px;
+            height: 300px;
+            background: url(https://i.ibb.co.com/0RHQrHm7/loading.png);
+            background-size: cover;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 600;
+            color: var(--color-dark);
+            transform: rotate(-3deg);
+            animation: floatSubAnim 7s ease-in-out infinite;
+            animation-delay: 1s;
+        }
+
+        /* --- СЕКЦИЯ: ABOUT AURA (FEATURES) --- */
+        .features-section {
+            background-image:linear-gradient(90deg,hsl(0,0%,85%),var(--color-white),hsl(0,0%,85%)) ;
+            width: 100%;
+            padding: 120px 0 100px 0;
+            position: relative; 
+            z-index: 2;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 100px;
+        }
+
+        .section-header h2 {
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+
+        .section-header p {
+            font-size: 19px;
+            color: hsl(0, 0%, 40%);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .feature-row {
+            display: flex;
+            align-items: center;
+            gap: 80px;
+            margin-bottom: 120px;
+        }
+
+        .feature-row.reverse {
+            flex-direction: row-reverse;
+        }
+
+        .feature-text {
+            flex: 1;
+        }
+
+        .feature-text h3 {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: var(--color-dark);
+        }
+
+        .feature-text p {
+            font-size: 18px;
+            line-height: 1.6;
+            color: hsl(0, 0%, 35%);
+            margin-bottom: 25px;
+        }
+
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-list li {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            font-size: 16px;
+            color: var(--color-dark);
+        }
+
+        .feature-list li::before {
+            content: '✓'; 
+            position: absolute;
+            left: 0;
+            top: 0px;
+            color: var(--color-blue);
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .feature-visual {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            position: relative;
+        }
+
+        .feature-card {
+            width: 100%;
+            max-width: 460px;
+            height: 340px;
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 30px;
+            font-weight: 700;
+            font-size: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.15);
+        }
+
+        .feature-card-blue {
+            background: url(https://i.ibb.co.com/MymMGX2z/analysis.png);
+            background-size: cover;
+            color: var(--color-white);
+            animation: floatAnim 6s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card-dark {
+            background:url(https://i.ibb.co.com/LHtJhcy/dashboard.png);
+            background-size: cover;
+            background-position: left;
+            color: var(--color-white);
+            animation: floatSubAnim 7s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card-light {
+            background: url(https://i.ibb.co.com/d0bFvFzP/prediction.png);
+            background-size: cover;
+            color: var(--color-dark);
+            border: 1px solid rgba(0,0,0,0.05);
+            animation: floatAnim 8s ease-in-out infinite;
+            animation-delay: 1s;
+        }
+
+        .feature-badge {
+            margin-top: 15px;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            backdrop-filter: blur(5px);
+        }
+
+        .feature-card-light .feature-badge {
+            background: rgba(0,0,0,0.05);
+        }
+
+        /* --- СЕКЦИЯ: WHY AURA? --- */
+        .why-aura-section {
+            background: linear-gradient(90deg, var(--color-blue-dark), var(--color-blue),var(--color-blue-dark));
+            width: 100%;
+            padding: 120px 0;
+            position: relative;
+            z-index: 3;
+            color: var(--color-white);
+        }
+
+        .why-header {
+            text-align: center;
+            margin-bottom: 80px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+            animation-delay: 0.2s; /* Анимация появления */
+        }
+
+        .why-header h2 {
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+            color: var(--color-white);
+        }
+
+        .why-header p {
+            font-size: 19px;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        /* Добавлена анимация карточкам сравнения */
+        .comparison-card {
+            background: rgba(255, 255, 255, 0.03); 
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 40px 30px;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        /* Каскадная задержка появления для эффекта "лесенки" */
+        .comparison-card:nth-child(1) { animation-delay: 0.4s; }
+        .comparison-card:nth-child(2) { animation-delay: 0.6s; }
+        .comparison-card:nth-child(3) { animation-delay: 0.8s; }
+
+        .comparison-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(99, 102, 241, 0.5); 
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+
+        .aura-trait {
+            color: var(--color-white);
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+       
+        .trait-desc {
+            color: rgba(255, 255, 255, 0.65);
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        /* --- НОВАЯ СЕКЦИЯ: КОМАНДА (SHAKI) --- */
+        .shaki-section {
+            background:linear-gradient(90deg, var(--color-yellow), rgb(253, 213, 82), var(--color-yellow)); /* Светлый контрастный фон для финала */
+            padding: 150px 0;
+            text-align: center;
+        }
+
+        .shaki-header {
+            margin-bottom: 80px;
+        }
+
+        .shaki-header h2 {
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+            color: var(--color-dark);
+        }
+
+        .shaki-header p {
+            font-size: 19px;
+            color: hsl(0, 0%, 40%);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); /* Адаптивная сетка на 4 колонки */
+            gap: 40px;
+            margin-bottom: 80px;
+        }
+
+        .team-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 20px;
+            border-radius: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .team-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .member-photo {
+            width: 140px;
+            height: 140px;
+            background-color: var(--color-light-grey); /* Плейсхолдер цвета */
+            border-radius: 50%;
+            margin-bottom: 24px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            background-size: cover;
+            background-position: center;
+        }
+
+        .member-name {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--color-dark);
+            margin-bottom: 5px;
+        }
+
+        .member-role {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--color-blue);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+
+        .member-bio {
+            font-size: 14px;
+            color: hsl(0, 0%, 40%);
+            line-height: 1.5;
+        }
+
+        .final-cta {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 40px;
+            padding-top: 60px;
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a  href="#mainSection" class="logo-wrapper">
+                <div class="loader-area">
+                    <div class="spinner-ring">
+                        <img src="https://i.ibb.co.com/mmYCfZX/standard-Logo.png" class="meteor-logo" alt="Aura Logo">
+                    </div>
+                </div>
+                <span class="logo-text">Aura</span>
+            </div>
+            
+            <div class="nav-links">
+                <a href="#about">About Aura</a>
+                <a href="#why">Why "Aura"?</a>
+                <a href="#shaki">Shaki</a>
+            </a>
+        </div>
+    </nav>
+
+    <div class="container" id="mainSection">
+        <main class="hero-section">
+            <div class="content-left">
+                <div class="text-content">
+                    <h1 class="slogan">Detect "red flags" in your conversations.</h1>
+                    <p class="subslogan">
+                        Get several answer options and outcome predictions from our AI-powered application.
+                    </p>
+                    <a href="https://github.com/Shyngyskhan-333/Shaki" class="btn-action" target="_blank">Github repo</a>
+                    <span class="button-caption">Provided by SHAKI team for NIS Hackathon-2026</span>
+                </div>
+
+                <div class="testimonial-block">
+                    <div class="quote-icon">“</div>
+                    <div>
+                        <p class="testimonial-text">Fascinating!</p>
+                        <div class="author-info">
+                            <div class="author-avatar"></div>
+                            <div>
+                                <div class="author-name">Shyngyskhan Sagyt</div>
+                                <div class="author-role">Frontend developer, InSIght</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-right">
+                <div class="placeholder-main">
+                </div>
+                <div class="placeholder-sub">
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <section class="features-section" id="about">
+        <div class="container">
+            <div class="section-header">
+                <h2>Elevate your communication</h2>
+                <p>Aura analyzes, predicts, and guides you through difficult conversations, preventing conflicts before they escalate.</p>
+            </div>
+
+            <div class="feature-row">
+                <div class="feature-text">
+                    <h3>Real-time Conflict Detection</h3>
+                    <p>Instantly identify passive-aggressive tones, manipulative language, and hidden triggers in your chats. Aura works in the background to keep your communication healthy.</p>
+                    <ul class="feature-list">
+                        <li>Emotional health indexing</li>
+                        <li>Passive-aggression highlighting</li>
+                        <li>Stress-level monitoring</li>
+                    </ul>
+                </div>
+                <div class="feature-visual">
+                    <div class="feature-card feature-card-blue">
+                        
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature-row reverse">
+                <div class="feature-text">
+                    <h3>Outcome Predictions</h3>
+                    <p>Before you hit send, Aura generates multiple alternative responses and predicts the likely outcome of each. Choose the path of least resistance or productive resolution.</p>
+                    <ul class="feature-list">
+                        <li>AI-generated reply alternatives</li>
+                        <li>Escalation probability scoring</li>
+                        <li>Constructive dialogue framing</li>
+                    </ul>
+                </div>
+                <div class="feature-visual">
+                    <div class="feature-card feature-card-light">
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature-row">
+                <div class="feature-text">
+                    <h3>Deep Customization</h3>
+                    <p>Tailor the AI mediator to your specific needs. Whether you are managing corporate communications or personal chats, Aura adapts to your environment.</p>
+                    <ul class="feature-list">
+                        <li>Adjustable AI sensitivity levels</li>
+                        <li>Customizable communication tone</li>
+                        <li>Corporate Dashboard & Analytics</li>
+                    </ul>
+                </div>
+                <div class="feature-visual">
+                    <div class="feature-card feature-card-dark">
+                    
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="why-aura-section" id="why">
+        <div class="container">
+            <div class="why-header">
+                <h2>Why "Aura"?</h2>
+                <p>We decode human intent to provide a truly unique mediation experience.</p>
+            </div>
+
+            <div class="comparison-grid">
+                <div class="comparison-card">
+
+                    <div class="aura-trait">Deep Psychological Context</div>
+                    <div class="trait-desc">
+                        Unlike standard AI that flags individual agressive phrases, Aura analyzes the historical context, passive aggression, and manipulative framing of the entire conversation.
+                    </div>
+                </div>
+
+                <div class="comparison-card">
+
+                    <div class="aura-trait">Proactive De-escalation</div>
+                    <div class="trait-desc">
+                        Contestants provide "stress score", while Aura acts as an active mediator, generating exact phrasing to de-escalate tension and reach a constructive outcome.
+                    </div>
+                </div>
+
+                <div class="comparison-card">
+
+                    <div class="aura-trait">Zero-Trace Privacy</div>
+                    <div class="trait-desc">
+                        Other platforms train their models on private conflicts. Aura uses a strict Zero-Trace architecture, ensuring that sensitive corporate and personal chats remain strictly private.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="shaki-section" id="shaki">
+        <div class="container">
+            <div class="shaki-header">
+                <h2>Meet Team SHAKI</h2>
+                <p>
+                    We are a dedicated group of developers participating in the <strong>NIS Hackathon-2026</strong>. 
+                    Our mission is to bridge the gap in digital communication by building accessible solutions.
+                </p>
+            </div>
+
+            <div class="team-grid">
+                <div class="team-card">
+                    <img class="member-photo" src="https://i.ibb.co.com/Hp13zQby/SHina.jpg"></img>
+                    <h4 class="member-name"><span style="color:var(--color-blue)">SH</span>ina</h4>
+                    <span class="member-role">Frontend developer</span>
+                    <p class="member-bio">Designed the UI/UX, built the Aura mobile application in React Native, crafted the landing page.</p>
+                </div>
+
+                <div class="team-card">
+                    <img class="member-photo" src="https://i.ibb.co.com/Psn45YyT/Adil.jpg"></img>
+                    <h4 class="member-name"><span style="color:var(--color-blue)">A</span>dil</h4>
+                    <span class="member-role">Project manager</span>
+                    <p class="member-bio">Guided the team's workflow, managed the project timeline, made a pitch presentation for the hackathon.</p>
+                </div>
+
+                <div class="team-card">
+                    <img class="member-photo" src="https://i.ibb.co.com/QjCBrC0H/Keme.png"></img>
+                    <h4 class="member-name"><span style="color:var(--color-blue)">K</span>eme</h4>
+                    <span class="member-role">Data analyst</span>
+                    <p class="member-bio">Implemented the data parsing pipeline using fast-whisper API and Groq for audio processing, collected data for databases.</p>
+                </div>
+
+                <div class="team-card">
+                    <img class="member-photo" src="https://i.ibb.co.com/DH9tq6Pr/Ilyas.png"></img>
+                    <h4 class="member-name"><span style="color:var(--color-blue)">I</span>lyas</h4>
+                    <span class="member-role">Backend developer</span>
+                    <p class="member-bio">Developed the JavaScript/Node.js backend and integrated the Groq API to drive the core AI.</p>
+                </div>
+            </div>
+
+            <div class="final-cta">
+                <a href="https://github.com/Shyngyskhan-333/Shaki" class="btn-action" target="_blank" style="padding: 20px 60px; font-size: 18px;">
+                    View Github Repository
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+</body>
+</html>
