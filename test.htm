@@ -6,7 +6,7 @@
     <title>NIS Hackathon-2026: Shaki: Aura</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
     <style>
-        /* --- Цветовая палитра и переменные --- */
+
         :root {
             --color-yellow: #FFBF00;
             --color-dark: hsl(0, 0%, 20%);
@@ -24,7 +24,7 @@
         }
 
         html {
-            /* Плавная прокрутка при клике на меню */
+  
             scroll-behavior: smooth; 
         }
 
@@ -44,7 +44,7 @@
             position: relative;
         }
 
-        /* --- Анимации контента --- */
+
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
@@ -62,7 +62,7 @@
             100% { transform: translateY(0px) rotate(-3deg); }
         }
 
-        /* --- Фиксированная навигационная панель --- */
+        
         .navbar {
             display: flex;
             justify-content: space-between;
@@ -149,7 +149,7 @@
 
         .nav-links a:hover { opacity: 0.6; }
 
-        /* --- Главный контент (Hero) --- */
+
         .hero-section {
             display: flex;
             justify-content: space-between;
@@ -353,7 +353,6 @@
             animation-delay: 1s;
         }
 
-        /* --- СЕКЦИЯ: ABOUT AURA (FEATURES) --- */
         .features-section {
             background-image:linear-gradient(90deg,hsl(0,0%,85%),var(--color-white),hsl(0,0%,85%)) ;
             width: 100%;
@@ -505,7 +504,7 @@
             background: rgba(0,0,0,0.05);
         }
 
-        /* --- СЕКЦИЯ: WHY AURA? --- */
+
         .why-aura-section {
             background: linear-gradient(90deg, var(--color-blue-dark), var(--color-blue),var(--color-blue-dark));
             width: 100%;
@@ -520,7 +519,7 @@
             margin-bottom: 80px;
             opacity: 0;
             animation: fadeInUp 0.8s ease forwards;
-            animation-delay: 0.2s; /* Анимация появления */
+            animation-delay: 0.2s; 
         }
 
         .why-header h2 {
@@ -545,7 +544,7 @@
             gap: 30px;
         }
 
-        /* Добавлена анимация карточкам сравнения */
+
         .comparison-card {
             background: rgba(255, 255, 255, 0.03); 
             border: 1px solid rgba(255, 255, 255, 0.08);
@@ -557,7 +556,7 @@
             animation: fadeInUp 0.8s ease forwards;
         }
 
-        /* Каскадная задержка появления для эффекта "лесенки" */
+
         .comparison-card:nth-child(1) { animation-delay: 0.4s; }
         .comparison-card:nth-child(2) { animation-delay: 0.6s; }
         .comparison-card:nth-child(3) { animation-delay: 0.8s; }
@@ -587,9 +586,9 @@
             line-height: 1.7;
         }
 
-        /* --- НОВАЯ СЕКЦИЯ: КОМАНДА (SHAKI) --- */
+
         .shaki-section {
-            background:linear-gradient(90deg, var(--color-yellow), rgb(253, 213, 82), var(--color-yellow)); /* Светлый контрастный фон для финала */
+            background:linear-gradient(90deg, var(--color-yellow), rgb(253, 213, 82), var(--color-yellow)); 
             padding: 150px 0;
             text-align: center;
         }
@@ -616,7 +615,7 @@
 
         .team-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); /* Адаптивная сетка на 4 колонки */
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 40px;
             margin-bottom: 80px;
         }
@@ -637,7 +636,7 @@
         .member-photo {
             width: 140px;
             height: 140px;
-            background-color: var(--color-light-grey); /* Плейсхолдер цвета */
+            background-color: var(--color-light-grey);
             border-radius: 50%;
             margin-bottom: 24px;
             box-shadow: 0 15px 30px rgba(0,0,0,0.1);
@@ -881,4 +880,5 @@
     </section>
 
 </body>
+
 </html>
